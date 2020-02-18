@@ -1,0 +1,88 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("How many numbers do want to enter:(N>=2)\t");
+
+            int[] arr = new int[Convert.ToInt32(Console.ReadLine())];
+            if (arr.Length<2)
+            {
+                Console.WriteLine("You must enter at least two number");
+                Console.ReadKey();
+                return;
+            }
+
+            int i,res;
+            for (i=0; i<arr.Length;i++)
+            {
+                Console.WriteLine("Enter number:\t");
+                arr[i] = Convert.ToInt32(Console.ReadLine());
+            }
+
+            Program prg = new Program();
+            res = prg.Challenge(arr);
+            Console.WriteLine("The biggest combination of two neighboring elements is: {0}", res);
+            Console.ReadKey();
+        }
+
+        public int Challenge(int[] input)
+        {
+            var dict = new Dictionary<int, int>();
+
+            foreach (var value in input)
+            {
+                if (dict.ContainsKey(value))
+                    dict[value]++;
+                else
+                    dict[value] = 1;
+            }
+
+            foreach (var pair in dict)
+                Console.WriteLine("Value {0} occurred {1} times.", pair.Key, pair.Value);
+
+            //find maximum repeated times
+            int M = 0;
+            foreach (var pair in dict)
+                if (pair.Value > M) M = pair.Value;
+            Console.WriteLine("Repeated maximum {0} times", M);
+
+            //Repeated at least M-1 times.
+            var FinalDict = new Dictionary<int, int>();
+            foreach (var pair in dict)
+                if (pair.Value >= M-1)
+                    FinalDict.Add(pair.Key, pair.Value);
+
+            //filter all the input with at least the M-1 repeat
+            foreach (var pair in FinalDict)
+                Console.WriteLine("M-1 repeat: Value {0} occurred {1} times.", pair.Key, pair.Value);
+
+            //Find the biggest combination of two neighboring elements of array 
+            List<int> result_List = new List<int>();
+            int i;
+            for (i = 0; i < input.Length; i++)
+                if (FinalDict.ContainsKey(input[i]))
+                {
+                    result_List.Add(input[i]);
+                }
+
+            Console.WriteLine("Final array list is:");
+            result_List.ForEach(Console.WriteLine);
+
+            int BiggestCombination = 0;
+            BiggestCombination = result_List[0] + result_List[1];
+            for (i = 1; i < result_List.Count - 1; i++)
+                if (result_List[i] + result_List[i + 1] > BiggestCombination)
+                    BiggestCombination = result_List[i] + result_List[i + 1];
+
+            return BiggestCombination;
+        }
+    }
+}
