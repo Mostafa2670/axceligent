@@ -3,21 +3,67 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-namespace ConsoleApp1
+
+namespace AlexaSettings
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            var alexa = new Alexa(); Console.WriteLine(alexa.Talk());
+            var alexa = new Alexa();
+            Console.WriteLine(alexa.Talk()); //print hello, i am Alexa
 
-            alexa.Configure(x => { x.OwnerName = "Bob Marly"; x.GreetingMessage = $"Hello {x.OwnerName},I'm at your service"; return x; }); Console.WriteLine(alexa.Talk()); Console.WriteLine("press any key to exit ..."); Console.ReadLine();
+            alexa.Configure(x =>
+            {
+                x.GreetingMessage = "Hello {OwnerName}, I'm at your service";
+                x.OwnerName = "Bob Marley";
+                return x;
+            });
+
+            Console.WriteLine(alexa.Talk()); //print Hello Bob Marley, I'm at your service
+
+            Console.WriteLine("press any key to exit ...");
+            Console.ReadKey();
+
         }
     }
-    public class Alexa
+
+    internal class Alexa
     {
-        public string GreetingMessage = "Hello, i am alexa"; public string OwnerName = "";
-        internal void Configure(Func<Alexa, Alexa> p) { GreetingMessage = p(this).GreetingMessage; }
-        internal string Talk() { return GreetingMessage; }
+        internal string GreetingMessage { get; set; } = "";
+        internal string OwnerName { get; set; } = "";
+        internal bool Config { get; set; } = false;
+        public Alexa()
+        {
+           
+        }
+
+        
+        internal string Talk()
+        {
+
+            if (Config)
+            {
+                return ($"Hello {OwnerName},I'm at your service");
+            }
+            else
+            {
+                return ($"Hello ,I'm Alexa");
+            }
+                
+           
+            
+        }
+
+        internal Alexa Configure(Func<Alexa, Alexa> p)
+        {
+            GreetingMessage = p(this).GreetingMessage;
+            OwnerName = p(this).OwnerName;
+            Config = true;
+            return this;
+
+        }
     }
+   
 }
